@@ -70,6 +70,7 @@ public class SQLInjectionServlet extends AbstractServlet {
 //            stmt = conn.createStatement();
 //            rs = stmt.executeQuery("SELECT name, secret FROM users WHERE ispublic = 'true' AND name='" + name
 //                    + "' AND password='" + password + "'");
+           
             stmt = conn.prepareStatement(query);
             stmt.setString(1, name);
             stmt.setString(2, password);
