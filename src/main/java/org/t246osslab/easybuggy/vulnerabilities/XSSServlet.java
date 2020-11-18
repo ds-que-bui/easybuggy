@@ -40,7 +40,10 @@ public class XSSServlet extends AbstractServlet {
             if (!StringUtils.isBlank(string)) {
                 // Reverse the given string
                 String reversedName = StringUtils.reverse(string);
+                
+                //que-bui 2020-11-18 validate xss
                 reversedName = stripXSSAttack(reversedName);
+                
                 bodyHtml.append(getMsg("label.reversed.string", locale) + " : "
                         + reversedName);
             } else {
@@ -56,6 +59,7 @@ public class XSSServlet extends AbstractServlet {
             log.error("Exception occurs: ", e);
         }
     }
+    //que-bui method filter and replace xss
     private static Pattern[] patterns = new Pattern[]{
             Pattern.compile("<script>(.*?)</script>", Pattern.CASE_INSENSITIVE),
             Pattern.compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
