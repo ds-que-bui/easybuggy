@@ -37,7 +37,7 @@ public class LDAPInjectionServlet extends DefaultLoginServlet {
         ExprNode filter;
         EntryFilteringCursor cursor = null;
         try {
-            filter = FilterParser.parse("(&(uid=" + uid.trim() + ")(userPassword=" + password.trim() + "))");
+            filter = FilterParser.parse("(&(uid=" + escapeLDAPSearchFilter(uid).trim() + ")(userPassword=" + escapeLDAPSearchFilter(password).trim() + "))");
             cursor = EmbeddedADS.getAdminSession().search(new LdapDN("ou=people,dc=t246osslab,dc=org"),
                     SearchScope.SUBTREE, filter, AliasDerefMode.NEVER_DEREF_ALIASES, null);
             if (cursor.available()) {
@@ -56,4 +56,33 @@ public class LDAPInjectionServlet extends DefaultLoginServlet {
         }
         return false;
     }
+    public static final String escapeLDAPSearchFilter(String filter) 
+    { 
+        // If using JDK >= 1.5 consider using StringBuilder 
+        StringBuffer sb = new StringBuffer();  
+      
+        for (int i = 0; i < filter.length(); i++) { 
+            char curChar = filter.charAt(i); 
+            switch (curChar) { 
+            case '\\': 
+                sb.append("\\5c"); 
+                break; 
+            case '*': 
+                sb.append("\\2a"); 
+                break; 
+            case '(': 
+                sb.append("\\28"); 
+                break; 
+            case ')': 
+                sb.append("\\29"); 
+                break; 
+            case '\u0000': 
+                sb.append("\\00"); 
+                break; 
+            default: 
+                sb.append(curChar); 
+            } 
+        } 
+        return sb.toString(); 
+    } 
 }
